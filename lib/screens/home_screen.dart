@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  bool _searchInLyrics = false;
 
   @override
   void initState() {
@@ -41,28 +42,42 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Buscar por número ou título...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _query.isEmpty
-                    ? null
-                    : IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _query = '');
-                        },
-                        tooltip: 'Limpar',
-                      ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar por número ou título...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _query.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _query = '');
+                            },
+                            tooltip: 'Limpar',
+                          ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                  ),
+                  onChanged: (value) => setState(() => _query = value),
                 ),
-                filled: true,
-              ),
-              onChanged: (value) => setState(() => _query = value),
+                const SizedBox(height: 4),
+                CheckboxListTile(
+                  value: _searchInLyrics,
+                  onChanged: (value) => setState(() => _searchInLyrics = value ?? false),
+                  title: const Text('Buscar na letra'),
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  dense: true,
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -77,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onRetry: () => state.loadHymns(),
                   );
                 }
-                final list = state.filterByQuery(_query);
+                final list = state.filterByQuery(_query, includeLyrics: _searchInLyrics);
                 if (list.isEmpty) {
                   return Center(
                     child: Text(

@@ -18,12 +18,16 @@ class HymnState extends ChangeNotifier {
   List<Hymn> get hymns => List.unmodifiable(_hymns);
   String? get errorMessage => _errorMessage;
 
-  /// Filtra hinos por número ou título (case-insensitive).
-  List<Hymn> filterByQuery(String query) {
+  /// Filtra hinos por número e título; se [includeLyrics] for true, também pela letra (case-insensitive).
+  List<Hymn> filterByQuery(String query, {bool includeLyrics = false}) {
     if (query.trim().isEmpty) return _hymns;
     final q = query.trim().toLowerCase();
     return _hymns.where((h) {
-      return h.number.toString().contains(q) || h.title.toLowerCase().contains(q);
+      final matchNumberOrTitle =
+          h.number.toString().contains(q) || h.title.toLowerCase().contains(q);
+      if (matchNumberOrTitle) return true;
+      if (includeLyrics && h.lyrics.toLowerCase().contains(q)) return true;
+      return false;
     }).toList();
   }
 
