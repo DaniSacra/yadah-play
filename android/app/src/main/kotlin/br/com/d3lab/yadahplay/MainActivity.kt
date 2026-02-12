@@ -1,4 +1,4 @@
-package br.com.d3lab.yadah_play
+package br.com.d3lab.yadahplay
 
 import io.flutter.embedding.android.FlutterActivity
 

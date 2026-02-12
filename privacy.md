@@ -1,6 +1,6 @@
 # Política de Privacidade — Yadah Play (Hinário)
 
-**Última atualização:** [inserir data]
+**Última atualização: 11/02/2026**
 
 Esta Política de Privacidade descreve como o aplicativo **Yadah Play** (“Hinário”) trata informações em relação ao uso do app disponível na Google Play Store.
 
@@ -35,7 +35,7 @@ Qualquer alteração nesta Política de Privacidade será refletida nesta págin
 
 Em caso de dúvidas sobre esta Política de Privacidade ou sobre o tratamento de dados no app Yadah Play, entre em contato:
 
-- **E-mail:** [inserir seu e-mail de contato]
+- **E-mail: danisacra@gmail.com**
 
 ---
 

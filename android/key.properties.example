@@ -1,0 +1,7 @@
+# Copie este arquivo para key.properties e preencha com os dados do seu keystore.
+# NUNCA faça commit do key.properties no Git (ele já está no .gitignore).
+
+storePassword=sua_senha_do_keystore
+keyPassword=sua_senha_da_chave
+keyAlias=upload
+storeFile=upload-keystore.jks
