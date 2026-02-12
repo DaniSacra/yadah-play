@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/hymn.dart';
+import '../repositories/hymn_state.dart';
 
 class HymnDetailScreen extends StatefulWidget {
   final Hymn hymn;
@@ -12,16 +14,12 @@ class HymnDetailScreen extends StatefulWidget {
 }
 
 class _HymnDetailScreenState extends State<HymnDetailScreen> {
-  static const double _minFontSize = 14;
-  static const double _maxFontSize = 28;
-  static const double _defaultFontSize = 18;
-
-  double _lyricsFontSize = _defaultFontSize;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final hymn = widget.hymn;
+    final hymnState = context.watch<HymnState>();
+    final fontSize = hymnState.lyricsFontSize;
 
     return Scaffold(
       appBar: AppBar(
@@ -29,16 +27,16 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.remove_circle_outline),
-            onPressed: _lyricsFontSize <= _minFontSize
+            onPressed: fontSize <= kLyricsFontSizeMin
                 ? null
-                : () => setState(() => _lyricsFontSize = (_lyricsFontSize - 2).clamp(_minFontSize, _maxFontSize)),
+                : () => hymnState.setLyricsFontSize(fontSize - 2),
             tooltip: 'Diminuir fonte',
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline),
-            onPressed: _lyricsFontSize >= _maxFontSize
+            onPressed: fontSize >= kLyricsFontSizeMax
                 ? null
-                : () => setState(() => _lyricsFontSize = (_lyricsFontSize + 2).clamp(_minFontSize, _maxFontSize)),
+                : () => hymnState.setLyricsFontSize(fontSize + 2),
             tooltip: 'Aumentar fonte',
           ),
         ],
@@ -57,7 +55,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               hymn.lyrics,
               style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.6,
-                fontSize: _lyricsFontSize,
+                fontSize: fontSize,
               ),
             ),
           ],

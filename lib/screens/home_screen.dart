@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   String _query = '';
   bool _searchInLyrics = false;
 
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -48,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 TextField(
                   controller: _searchController,
+                  focusNode: _searchFocusNode,
                   decoration: InputDecoration(
                     hintText: 'Buscar por número ou título...',
                     prefixIcon: const Icon(Icons.search),
@@ -125,7 +128,20 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute<void>(
         builder: (context) => HymnDetailScreen(hymn: hymn),
       ),
-    );
+    ).then((_) {
+      // Ao voltar do hino: limpa a busca e remove o foco/teclado.
+      // Executamos após a transição da rota para evitar que o Flutter restaure o foco no campo.
+      if (!mounted) return;
+      _searchController.clear();
+      setState(() => _query = '');
+      void removeFocus() {
+        if (!mounted) return;
+        _searchFocusNode.unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) => removeFocus());
+      Future<void>.delayed(const Duration(milliseconds: 100), removeFocus);
+    });
   }
 }
 
