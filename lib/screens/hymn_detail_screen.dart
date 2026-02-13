@@ -21,6 +21,11 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final hymnState = context.watch<HymnState>();
     final fontSize = hymnState.lyricsFontSize;
 
+    final hymns = hymnState.hymns;
+    final index = hymns.isEmpty ? -1 : hymns.indexWhere((h) => h.id == hymn.id);
+    final hasPrevious = index > 0;
+    final hasNext = index >= 0 && index < hymns.length - 1;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Hino ${hymn.number}'),
@@ -41,24 +46,102 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              hymn.title,
-              style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              hymn.lyrics,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                height: 1.6,
-                fontSize: fontSize,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    hymn.title,
+                    style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    hymn.lyrics,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      height: 1.6,
+                      fontSize: fontSize,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _NavButton(
+                    icon: Icons.chevron_left,
+                    onPressed: hasPrevious
+                        ? () => _goToHymn(context, hymns[index - 1])
+                        : null,
+                    tooltip: 'Hino anterior',
+                  ),
+                  _NavButton(
+                    icon: Icons.chevron_right,
+                    onPressed: hasNext
+                        ? () => _goToHymn(context, hymns[index + 1])
+                        : null,
+                    tooltip: 'Próximo hino',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _goToHymn(BuildContext context, Hymn hymn) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (context) => HymnDetailScreen(hymn: hymn),
+      ),
+    );
+  }
+}
+
+class _NavButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final String tooltip;
+
+  const _NavButton({
+    required this.icon,
+    required this.onPressed,
+    required this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.white,
+        shape: const CircleBorder(),
+        elevation: 2,
+        shadowColor: Colors.black26,
+        child: InkWell(
+          onTap: onPressed,
+          customBorder: const CircleBorder(),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Icon(
+              icon,
+              size: 28,
+              color: onPressed != null
+                  ? Colors.black87
+                  : Colors.black26,
+            ),
+          ),
         ),
       ),
     );
