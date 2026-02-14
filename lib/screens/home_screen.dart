@@ -44,30 +44,31 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
                   controller: _searchController,
                   focusNode: _searchFocusNode,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   decoration: InputDecoration(
-                    hintText: 'Buscar por número ou título...',
-                    prefixIcon: const Icon(Icons.search),
+                    hintText: 'Pesquisar por número ou título...',
+                    prefixIcon: const Icon(Icons.search, size: 22),
                     suffixIcon: _query.isEmpty
                         ? null
                         : IconButton(
-                            icon: const Icon(Icons.close),
+                            icon: const Icon(Icons.close, size: 20),
                             onPressed: () {
                               _searchController.clear();
                               setState(() => _query = '');
                             },
                             tooltip: 'Limpar',
+                            style: IconButton.styleFrom(
+                              minimumSize: const Size(36, 36),
+                              padding: EdgeInsets.zero,
+                            ),
                           ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
                   ),
                   onChanged: (value) => setState(() => _query = value),
                 ),
@@ -105,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     final hymn = list[index];
@@ -188,13 +189,14 @@ class _HymnListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      clipBehavior: Clip.antiAlias,
+      margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Container(
@@ -202,14 +204,14 @@ class _HymnListTile extends StatelessWidget {
                 height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
+                  color: scheme.primary.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '${hymn.number}',
+                  hymn.number.toString().padLeft(3, '0'),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onPrimaryContainer,
+                    color: scheme.primary,
                   ),
                 ),
               ),
@@ -217,12 +219,15 @@ class _HymnListTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   hymn.title,
-                  style: theme.textTheme.titleMedium,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: scheme.onSurface,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant),
+              Icon(Icons.chevron_right, color: scheme.outline),
             ],
           ),
         ),

@@ -18,10 +18,55 @@ class YadahPlayApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Hinário',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light),
-          useMaterial3: true,
-        ),
+        theme: () {
+          const blue = Color(0xFF0F49BD);
+          final scheme = ColorScheme.fromSeed(
+            seedColor: blue,
+            brightness: Brightness.light,
+          ).copyWith(
+            primary: blue,
+            surface: const Color(0xFFF6F6F8),
+            surfaceContainerLowest: Colors.white,
+          );
+          return ThemeData(
+            useMaterial3: true,
+            colorScheme: scheme,
+            scaffoldBackgroundColor: scheme.surface,
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.white,
+              foregroundColor: scheme.primary,
+              elevation: 0,
+              scrolledUnderElevation: 1,
+              surfaceTintColor: Colors.transparent,
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: Colors.white,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            cardTheme: CardTheme(
+              color: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              clipBehavior: Clip.antiAlias,
+            ),
+            chipTheme: ChipThemeData(
+              backgroundColor: Colors.white,
+              selectedColor: scheme.primary,
+              side: BorderSide(color: scheme.outlineVariant),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            ),
+          );
+        }(),
         home: const HomeScreen(),
       ),
     );
