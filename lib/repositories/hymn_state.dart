@@ -17,7 +17,9 @@ const double kLyricsFontSizeMax = 28;
 
 /// [ChangeNotifier] que mantém a lista de hinos, carregamento e preferência de fonte.
 class HymnState extends ChangeNotifier {
-  final HymnRepository _repository = HymnRepository();
+  HymnState({HymnRepository? repository})
+      : _repository = repository ?? HymnRepository();
+  final HymnRepository _repository;
 
   HymnListStatus _status = HymnListStatus.initial;
   List<Hymn> _hymns = [];

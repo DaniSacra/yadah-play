@@ -122,10 +122,12 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final isDark = scheme.brightness == Brightness.dark;
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: Colors.white,
+        color: isDark ? scheme.surfaceContainerHigh : Colors.white,
         shape: const CircleBorder(),
         elevation: 2,
         shadowColor: Colors.black26,
@@ -137,9 +139,9 @@ class _NavButton extends StatelessWidget {
             child: Icon(
               icon,
               size: 28,
-              color: onPressed != null
-                  ? Colors.black87
-                  : Colors.black26,
+              color: isDark
+                  ? (onPressed != null ? scheme.onSurface : scheme.onSurface.withOpacity(0.38))
+                  : (onPressed != null ? Colors.black87 : Colors.black26),
             ),
           ),
         ),

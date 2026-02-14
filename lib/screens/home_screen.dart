@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/hymn.dart';
 import '../repositories/hymn_state.dart';
+import '../theme_mode_notifier.dart';
 import 'hymn_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -39,6 +40,23 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Hinário'),
         centerTitle: false,
+        actions: [
+          Consumer<ThemeModeNotifier>(
+            builder: (context, themeMode, _) {
+              return IconButton(
+                icon: Icon(
+                  themeMode.mode == ThemeMode.dark
+                      ? Icons.light_mode
+                      : Icons.dark_mode,
+                ),
+                onPressed: () => themeMode.toggle(),
+                tooltip: themeMode.mode == ThemeMode.dark
+                    ? 'Modo claro'
+                    : 'Modo escuro',
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -204,14 +222,18 @@ class _HymnListTile extends StatelessWidget {
                 height: 44,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: scheme.primary.withOpacity(0.12),
+                  color: scheme.brightness == Brightness.dark
+                      ? const Color(0xFF2C3A50)
+                      : scheme.primary.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '${hymn.number}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: scheme.primary,
+                    color: scheme.brightness == Brightness.dark
+                        ? scheme.onSurface
+                        : const Color(0xFF1976D2),
                   ),
                 ),
               ),
