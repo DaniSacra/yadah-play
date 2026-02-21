@@ -101,6 +101,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
   }
 
   void _goToHymn(BuildContext context, Hymn hymn) {
+    context.read<HymnState>().addToRecentHymns(hymn);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (context) => HymnDetailScreen(hymn: hymn),

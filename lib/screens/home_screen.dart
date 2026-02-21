@@ -5,6 +5,7 @@ import '../models/hymn.dart';
 import '../repositories/hymn_state.dart';
 import '../theme_mode_notifier.dart';
 import 'hymn_detail_screen.dart';
+import 'recent_hymns_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,6 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Hinário'),
         centerTitle: false,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () => _openRecentHymns(context),
+            tooltip: 'Últimos hinos visualizados',
+          ),
           Consumer<ThemeModeNotifier>(
             builder: (context, themeMode, _) {
               return IconButton(
@@ -142,7 +148,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openRecentHymns(BuildContext context) {
+    final navigator = Navigator.of(context);
+    final hymnState = context.read<HymnState>();
+    navigator
+        .push<Hymn?>(
+          MaterialPageRoute<Hymn?>(
+            builder: (context) => const RecentHymnsScreen(),
+          ),
+        )
+        .then((hymn) {
+      if (hymn != null) {
+        hymnState.addToRecentHymns(hymn);
+        navigator.push(
+          MaterialPageRoute<void>(
+            builder: (context) => HymnDetailScreen(hymn: hymn),
+          ),
+        );
+      }
+    });
+  }
+
   void _openDetail(BuildContext context, Hymn hymn) {
+    context.read<HymnState>().addToRecentHymns(hymn);
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => HymnDetailScreen(hymn: hymn),
