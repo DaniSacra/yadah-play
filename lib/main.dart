@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'repositories/hymn_state.dart';
 import 'screens/home_screen.dart';
@@ -58,11 +60,15 @@ ThemeData _buildLightTheme() {
 }
 
 ThemeData _buildDarkTheme() {
-  const blue = Color(0xFF0F49BD);
+  // Azul mais claro no dark para boa leitura (Material Blue 300).
+  const primaryDark = Color(0xFF64B5F6);
   final scheme = ColorScheme.fromSeed(
-    seedColor: blue,
+    seedColor: primaryDark,
     brightness: Brightness.dark,
-  ).copyWith(primary: blue);
+  ).copyWith(
+    primary: primaryDark,
+    onPrimary: const Color(0xFF003258),
+  );
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
@@ -126,7 +132,21 @@ class YadahPlayApp extends StatelessWidget {
             theme: _buildLightTheme(),
             darkTheme: _buildDarkTheme(),
             themeMode: themeModeNotifier.mode,
-            home: const HomeScreen(),
+            // Ao publicar nova versão na Play Store, quem está em versão antiga
+            // vê o aviso e o botão "Atualizar" abre a loja. Para forçar (sem
+            // "Depois"/"Ignorar"), adicione na descrição da loja:
+            // [Minimum supported app version: 2.0.0]
+            home: UpgradeAlert(
+              upgrader: Upgrader(
+                languageCode: 'pt',
+                durationUntilAlertAgain: const Duration(days: 1),
+                // Em debug o diálogo aparece sempre (para testar). Em release, só quando há versão nova na loja.
+                debugDisplayAlways: kDebugMode,
+              ),
+              showIgnore: false,
+              showLater: false,
+              child: const HomeScreen(),
+            ),
           );
         },
       ),

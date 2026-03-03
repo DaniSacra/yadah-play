@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/hymn.dart';
 import '../repositories/hymn_state.dart';
+import '../widgets/hymn_list_tile.dart';
 import '../theme_mode_notifier.dart';
 import 'hymn_detail_screen.dart';
 import 'recent_hymns_screen.dart';
@@ -25,6 +28,42 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HymnState>().loadHymns();
+      if (kDebugMode) _showDebugUpdateDialog();
+    });
+  }
+
+  /// Em debug: mostra diálogo de "atualizar app" após 1,5 s para testar o fluxo.
+  void _showDebugUpdateDialog() {
+    Future<void>.delayed(const Duration(milliseconds: 1500), () {
+      if (!mounted) return;
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Nova versão disponível'),
+          content: const Text(
+            'Uma nova versão do Hinário está disponível na Play Store. Atualize para acessar as novidades.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Depois'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final uri = Uri.parse(
+                  'https://play.google.com/store/apps/details?id=br.com.d3lab.yadahplay',
+                );
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: const Text('Atualizar'),
+            ),
+          ],
+        ),
+      );
     });
   }
 
@@ -134,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     final hymn = list[index];
-                    return _HymnListTile(
+                    return HymnListTile(
                       hymn: hymn,
                       onTap: () => _openDetail(context, hymn),
                     );
@@ -226,63 +265,3 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
-class _HymnListTile extends StatelessWidget {
-  final Hymn hymn;
-  final VoidCallback onTap;
-
-  const _HymnListTile({required this.hymn, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: scheme.brightness == Brightness.dark
-                      ? const Color(0xFF2C3A50)
-                      : scheme.primary.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${hymn.number}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: scheme.brightness == Brightness.dark
-                        ? scheme.onSurface
-                        : const Color(0xFF1976D2),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  hymn.title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 15,
-                    color: scheme.onSurface,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(Icons.chevron_right, color: scheme.outline),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

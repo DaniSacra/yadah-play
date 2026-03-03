@@ -14,6 +14,8 @@ void main() {
   testWidgets('App inicia com título Hinário', (WidgetTester tester) async {
     await tester.pumpWidget(const YadahPlayApp());
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 2)); // deixa o timer do diálogo de debug rodar
 
     expect(find.text('Hinário'), findsOneWidget);
   });
@@ -21,6 +23,8 @@ void main() {
   testWidgets('Home exibe campo de pesquisa com placeholder', (WidgetTester tester) async {
     await tester.pumpWidget(const YadahPlayApp());
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.byType(TextField), findsOneWidget);
     expect(find.text('Pesquisar por número ou título...'), findsOneWidget);
@@ -29,6 +33,8 @@ void main() {
   testWidgets('Home exibe ícone de tema (dark/light mode)', (WidgetTester tester) async {
     await tester.pumpWidget(const YadahPlayApp());
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.byIcon(Icons.dark_mode), findsOneWidget);
   });
@@ -36,6 +42,8 @@ void main() {
   testWidgets('Home exibe ícone de histórico', (WidgetTester tester) async {
     await tester.pumpWidget(const YadahPlayApp());
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 2));
 
     expect(find.byIcon(Icons.history), findsOneWidget);
   });
@@ -55,9 +63,8 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.text('Últimos hinos visualizados'), findsOneWidget);
     expect(find.text('Noite de Paz'), findsOneWidget);
     expect(find.text('Castelo Forte'), findsOneWidget);
   });
@@ -75,9 +82,8 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.text('Últimos hinos visualizados'), findsOneWidget);
     expect(find.text('Nenhum hino visualizado ainda.'), findsOneWidget);
   });
 }

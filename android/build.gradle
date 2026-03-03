@@ -9,6 +9,17 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+// Plugins como package_info_plus esperam a propriedade 'flutter' (ex.: compileSdkVersion).
+subprojects { subproject ->
+    if (subproject.name != "app") {
+        subproject.beforeEvaluate {
+            subproject.ext.set("flutter", [
+                compileSdkVersion: 35,
+                minSdkVersion: 21,
+            ])
+        }
+    }
+}
 subprojects {
     project.evaluationDependsOn(":app")
 }
