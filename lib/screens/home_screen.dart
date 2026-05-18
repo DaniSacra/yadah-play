@@ -1,17 +1,20 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:upgrader/upgrader.dart';
 
+import '../upgrader/app_upgrader_config.dart';
 import '../models/hymn.dart';
 import '../repositories/hymn_state.dart';
 import '../widgets/hymn_list_tile.dart';
+import '../widgets/upgrader_debug_panel.dart';
 import '../theme_mode_notifier.dart';
 import 'hymn_detail_screen.dart';
 import 'recent_hymns_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Upgrader? upgrader;
+
+  const HomeScreen({super.key, this.upgrader});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -28,42 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HymnState>().loadHymns();
-      if (kDebugMode) _showDebugUpdateDialog();
-    });
-  }
-
-  /// Em debug: mostra diálogo de "atualizar app" após 1,5 s para testar o fluxo.
-  void _showDebugUpdateDialog() {
-    Future<void>.delayed(const Duration(milliseconds: 1500), () {
-      if (!mounted) return;
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text('Nova versão disponível'),
-          content: const Text(
-            'Uma nova versão do Hinário está disponível na Play Store. Atualize para acessar as novidades.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Depois'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final uri = Uri.parse(
-                  'https://play.google.com/store/apps/details?id=br.com.d3lab.yadahplay',
-                );
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
-              },
-              child: const Text('Atualizar'),
-            ),
-          ],
-        ),
-      );
     });
   }
 
@@ -109,8 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (kShowUpgraderDebugPanel && widget.upgrader != null) ...[
+                  UpgraderDebugPanel(upgrader: widget.upgrader!),
+                  const SizedBox(height: 12),
+                ],
                 TextField(
                   controller: _searchController,
                   focusNode: _searchFocusNode,

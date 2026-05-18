@@ -12,7 +12,7 @@ class RecentHymnsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Últimos hinos'),
+        title: const Text('Hinos recentes'),
         centerTitle: false,
       ),
       body: Consumer<HymnState>(

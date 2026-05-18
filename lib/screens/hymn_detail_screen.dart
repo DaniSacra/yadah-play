@@ -51,22 +51,27 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hymn.title,
-                    style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    hymn.lyrics,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      height: 1.6,
-                      fontSize: fontSize,
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hymn.title,
+                      style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    Text(
+                      hymn.displayLyrics,
+                      textAlign: TextAlign.left,
+                      textDirection: TextDirection.ltr,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        height: 1.6,
+                        fontSize: fontSize,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

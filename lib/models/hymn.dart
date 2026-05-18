@@ -1,3 +1,15 @@
+/// Remove marcas invisíveis de direção e espaços no início/fim de cada linha.
+String normalizeHymnLyrics(String lyrics) {
+  const marks = [
+    '\u200e', '\u200f', '\u202a', '\u202b', '\u202c', '\u202d', '\u202e', '\ufeff',
+  ];
+  var text = lyrics;
+  for (final mark in marks) {
+    text = text.replaceAll(mark, '');
+  }
+  return text.split('\n').map((line) => line.trim()).join('\n');
+}
+
 /// Modelo de um hino do hinário.
 class Hymn {
   final String id;
@@ -11,6 +23,9 @@ class Hymn {
     required this.title,
     required this.lyrics,
   });
+
+  /// Letra formatada para exibição (sem espaços/marcas que deslocam o texto).
+  String get displayLyrics => normalizeHymnLyrics(lyrics);
 
   factory Hymn.fromJson(Map<String, dynamic> json) {
     return Hymn(

@@ -39,6 +39,16 @@ void main() {
       expect(hymn.lyrics, '');
     });
 
+    test('displayLyrics remove espaços e marcas de direção no início das linhas', () {
+      const hymn = Hymn(
+        id: '2',
+        number: 2,
+        title: 'Em adoração',
+        lyrics: '\u202b   Em Adoração,\n  Eu me rendo a Ti.',
+      );
+      expect(hymn.displayLyrics, 'Em Adoração,\nEu me rendo a Ti.');
+    });
+
     test('toJson retorna mapa com os mesmos dados', () {
       const hymn = Hymn(
         id: '10',
