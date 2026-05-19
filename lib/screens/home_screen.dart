@@ -1,20 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:upgrader/upgrader.dart';
 
-import '../upgrader/app_upgrader_config.dart';
 import '../models/hymn.dart';
 import '../repositories/hymn_state.dart';
+import '../services/in_app_update_service.dart';
 import '../widgets/hymn_list_tile.dart';
-import '../widgets/upgrader_debug_panel.dart';
+import '../widgets/update_debug_banner.dart';
 import '../theme_mode_notifier.dart';
 import 'hymn_detail_screen.dart';
 import 'recent_hymns_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final Upgrader? upgrader;
-
-  const HomeScreen({super.key, this.upgrader});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,7 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       context.read<HymnState>().loadHymns();
+      checkAndPromptUpdate(context);
     });
   }
 
@@ -78,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (kShowUpgraderDebugPanel && widget.upgrader != null) ...[
-                  UpgraderDebugPanel(upgrader: widget.upgrader!),
+                if (kDebugMode) ...[
+                  const UpdateDebugBanner(),
                   const SizedBox(height: 12),
                 ],
                 TextField(
